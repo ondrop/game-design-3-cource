@@ -1,7 +1,4 @@
 $(document).ready(function () {
-    console.log("ready!");
-
-    console.log('changed');
     $('#image-input').on('change', function () {
         let fileList = this.files;
         if (fileList.length > 0) {
@@ -35,8 +32,7 @@ function addImage(file) {
     if (imageTag.length === 0) {
         imageTag = document.createElement('img')
         $(imageTag).attr('id', 'image');
-        $(imageTag).attr('class', 'd-block m-auto w-100 h-100');
-        $(imageTag).attr('style', 'object-fit: contain;');
+        $(imageTag).attr('class', 'd-block m-auto');
     }
 
     let fr = new FileReader();
@@ -45,7 +41,6 @@ function addImage(file) {
     }
 
     fr.readAsDataURL(file);
-    console.log(imageTag);
 
     $('#image-wrapper').append(imageTag);
 }
