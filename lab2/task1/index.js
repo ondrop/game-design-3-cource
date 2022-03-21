@@ -16,6 +16,7 @@ function getExtension(filename) {
 function isImage(filename) {
     let ext = getExtension(filename);
     switch (ext.toLowerCase()) {
+        case 'jpeg':
         case 'jpg':
             return true;
     }
@@ -25,6 +26,7 @@ function isImage(filename) {
 
 function addImage(file) {
     if (!isImage(file.name)) {
+        alert("Choose picture with .jpeg extension");
         return;
     }
 
