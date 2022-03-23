@@ -6,6 +6,7 @@ import org.lwjgl.system.*;
 
 import java.nio.*;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
@@ -72,21 +73,40 @@ abstract public class BaseWindow {
     public void run() {
         GL.createCapabilities();
 
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         while (!glfwWindowShouldClose(window)) {
-            int[] frameBufferWidth = {0};
-            int[] frameBufferHeight = {0};
-            glfwGetFramebufferSize(window, frameBufferWidth, frameBufferHeight);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            resizeHandler();
 
-            setGlOrtho(frameBufferWidth[0], frameBufferHeight[0]);
-            draw(frameBufferWidth[0], frameBufferHeight[0]);
+            draw();
 
             glfwSwapBuffers(window);
-
+            glFinish();
             glfwPollEvents();
         }
+
+        // Free the window callbacks and destroy the window
+        glfwFreeCallbacks(window);
+        glfwDestroyWindow(window);
+
+        // Terminate GLFW and free the error callback
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
     }
 
-    public void setGlOrtho(int width, int height) {
+    private void resizeHandler() {
+        int[] frameBufferWidth = {0};
+        int[] frameBufferHeight = {0};
+        glfwGetFramebufferSize(window, frameBufferWidth, frameBufferHeight);
+
+        int width = frameBufferWidth[0];
+        int height = frameBufferHeight[0];
+        setGlOrtho(width, height);
+
+        glViewport(0, 0, width, height);
+    }
+
+    private void setGlOrtho(int width, int height) {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
@@ -98,5 +118,5 @@ abstract public class BaseWindow {
         }
     }
 
-    abstract public void draw(int width, int height);
+    abstract public void draw();
 }

@@ -11,6 +11,13 @@ public class Yozhik extends BaseWindow {
     public Yozhik(int width, int height, String title) {
         super(width, height, title);
     }
+    
+    public void draw() {
+        drawHead();
+        drawHands();
+        drawLegs();
+        drawGlassesAndEyes();
+    }
 
     private void drawHead() {
         // needles
@@ -204,17 +211,5 @@ public class Yozhik extends BaseWindow {
         rightEyeLight.draw();
         Drawable leftEyeLight = new Ellipse(-0.045f, 0.09f, 0.008f, 0.015f);
         leftEyeLight.draw();
-    }
-
-    public void draw(int width, int height) {
-        glViewport(0, 0, width, height);
-
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        drawHead();
-        drawGlassesAndEyes();
-        drawHands();
-        drawLegs();
     }
 }
