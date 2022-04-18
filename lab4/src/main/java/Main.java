@@ -8,7 +8,7 @@ public class Main {
         try {
             boolean vSync = true;
             IGameLogic gameLogic = new DummyGame();
-            GameEngine gameEng = new GameEngine("Cube", 600, 480, vSync, gameLogic);
+            GameEngine gameEng = new GameEngine("Rhombicuboctahedron", 1280, 720, vSync, gameLogic);
             gameEng.run();
         } catch (Exception exception) {
             exception.printStackTrace();
