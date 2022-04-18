@@ -1,15 +1,17 @@
 package game;
 
+import engine.GameItem;
 import engine.Utils;
 import engine.Window;
-import engine.graph.Mesh;
+import engine.graph.Camera;
 import engine.graph.ShaderProgram;
+import engine.graph.Transformation;
 import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
+
     /**
      * Field of View in Radians
      */
@@ -19,9 +21,13 @@ public class Renderer {
 
     private static final float Z_FAR = 1000.f;
 
-    private Matrix4f projectionMatrix;
-
     private ShaderProgram shaderProgram;
+
+    private Transformation transformation;
+
+    public Renderer() {
+        transformation = new Transformation();
+    }
 
     public void init(Window window) throws Exception {
         shaderProgram = new ShaderProgram();
@@ -30,16 +36,18 @@ public class Renderer {
         shaderProgram.link();
 
         // Create projection matrix
-        float aspectRatio = (float) window.getWidth() / window.getHeight();
-        projectionMatrix = new Matrix4f().setPerspective(Renderer.FOV, aspectRatio, Renderer.Z_NEAR, Renderer.Z_FAR);
         shaderProgram.createUniform("projectionMatrix");
+        shaderProgram.createUniform("modelMatrix");
+        shaderProgram.createUniform("viewMatrix");
+
+        window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     }
 
     public void clear() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Window window, Mesh mesh) {
+    public void render(Window window, Camera camera, GameItem[] gameItems) {
         clear();
 
         if (window.isResized()) {
@@ -49,17 +57,22 @@ public class Renderer {
 
         shaderProgram.bind();
 
+        // Update projection Matrix
+        Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
-        // Bind to the VAO
-        glBindVertexArray(mesh.getVaoId());
+        // Update view Matrix
+        Matrix4f viewMatrix = transformation.getViewMatrix(camera);
 
-        // Draw the vertices
-        glBindVertexArray(mesh.getVaoId());
-        glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
-
-        // Restore state
-        glBindVertexArray(0);
+        // Render each gameItem
+        for (GameItem gameItem : gameItems) {
+            // Set model view matrix for this item
+            Matrix4f modelMatrix = transformation.getModelMatrix(gameItem);
+            shaderProgram.setUniform("modelMatrix", modelMatrix);
+            shaderProgram.setUniform("viewMatrix", viewMatrix);
+            // Render the mes for this game item
+            gameItem.getMesh().render();
+        }
 
         shaderProgram.unbind();
     }
