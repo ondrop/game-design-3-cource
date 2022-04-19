@@ -23,7 +23,13 @@ public class Mesh {
 
     private final int colourVboId;
 
-    public Mesh(float[] positions, float[] colors, int[] indices) {
+    private final int mode;
+
+    private int cullFace;
+
+    public Mesh(float[] positions, float[] colors, int[] indices, int mode) {
+        this.mode = mode;
+
         FloatBuffer posBuffer = null;
         FloatBuffer colourBuffer = null;
         IntBuffer indicesBuffer = null;
@@ -96,16 +102,21 @@ public class Mesh {
     }
 
     public void render() {
+        glCullFace(cullFace);
         // Draw the mesh
         glBindVertexArray(getVaoId());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
 
-        glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
+        glDrawElements(mode, getVertexCount(), GL_UNSIGNED_INT, 0);
 
         // Restore state
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glBindVertexArray(0);
+    }
+
+    public void setCullFace(int cullFace) {
+        this.cullFace = cullFace;
     }
 }

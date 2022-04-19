@@ -40,7 +40,7 @@ public class Renderer {
         shaderProgram.createUniform("modelMatrix");
         shaderProgram.createUniform("viewMatrix");
 
-        window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        window.setClearColor(1, 1, 1, 1);
     }
 
     public void clear() {
@@ -54,21 +54,17 @@ public class Renderer {
             glViewport(0, 0, window.getWidth(), window.getHeight());
             window.setResized(false);
         }
-
         shaderProgram.bind();
 
         // Update projection Matrix
         Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
-        // Update view Matrix
-        Matrix4f viewMatrix = transformation.getViewMatrix(camera);
-
         // Render each gameItem
         for (GameItem gameItem : gameItems) {
-            // Set model view matrix for this item
             Matrix4f modelMatrix = transformation.getModelMatrix(gameItem);
             shaderProgram.setUniform("modelMatrix", modelMatrix);
+            Matrix4f viewMatrix = transformation.getViewMatrix(camera);
             shaderProgram.setUniform("viewMatrix", viewMatrix);
             // Render the mes for this game item
             gameItem.getMesh().render();
