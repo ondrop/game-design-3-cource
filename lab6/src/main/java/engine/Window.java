@@ -93,9 +93,6 @@ public class Window {
 
         // Set the clear color
         glClearColor(1, 1, 1, 1);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glEnable(GL_CULL_FACE);
     }
 
     public void setClearColor(float r, float g, float b, float alpha) {

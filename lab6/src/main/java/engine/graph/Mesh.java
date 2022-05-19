@@ -126,6 +126,7 @@ public class Mesh {
         glEnableVertexAttribArray(2);
 
         glDrawElements(mode, getVertexCount(), GL_UNSIGNED_INT, 0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         // Restore state
         glDisableVertexAttribArray(0);
