@@ -21,13 +21,15 @@ public class Renderer {
 
     private static final float Z_FAR = 1000.f;
 
+    private static final int SLEEP_TIME = 1000;
+
     private ShaderProgram shaderProgram;
 
     private Transformation transformation;
 
     private float progress = 0;
 
-    private float step = 0.01f;
+    private float step = 0.005f;
 
     public Renderer() {
         transformation = new Transformation();
@@ -36,10 +38,8 @@ public class Renderer {
     public void init(Window window) throws Exception {
         shaderProgram = new ShaderProgram();
         shaderProgram.createVertexShader(Utils.loadResource("/vertex.glsl"));
-        shaderProgram.createFragmentShader(Utils.loadResource("/fragment.fs"));
         shaderProgram.link();
 
-        // Create projection matrix
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("modelMatrix");
         shaderProgram.createUniform("viewMatrix");
@@ -65,17 +65,8 @@ public class Renderer {
         Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
-        if (progress <= 0) {
-            step = 0.005f;
-        }
-
-        if (progress >= 1) {
-            step = -0.005f;
-        }
-
-        progress += step;
+        countProgress();
         shaderProgram.setUniform("progress", progress);
-
 
         // Render each gameItem
         for (GameItem gameItem : gameItems) {
@@ -94,5 +85,27 @@ public class Renderer {
         if (shaderProgram != null) {
             shaderProgram.cleanup();
         }
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(SLEEP_TIME);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void countProgress() {
+        if (progress <= 0) {
+            sleep();
+            step = 0.005f;
+        }
+
+        if (progress >= 1) {
+            sleep();
+            step = -0.005f;
+        }
+
+        progress += step;
     }
 }

@@ -1,10 +1,7 @@
 #version 330
 
 layout (location =0) in vec3 position1;
-layout (location =2) in vec3 position2;
-layout (location =1) in vec4 inColour;
-
-out vec4 exColour;
+layout (location =1) in vec3 position2;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -13,7 +10,6 @@ uniform float progress;
 
 void main()
 {
-    vec3 point = mix(position1, position2, progress);
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(point, 1.0);
-    exColour = inColour;
+    vec3 vertex = mix(position1, position2, progress);
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertex , 1.0);
 }
